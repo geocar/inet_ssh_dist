@@ -14,8 +14,9 @@ setup(Node, Type, MyNode, LongOrShortNames,SetupTime) ->
 		H1 == H2 -> inet_tcp_dist:setup(Node, Type, MyNode, LongOrShortNames, SetupTime); % bypass ssh
 		true -> 
 			Kernel = self(), 
+			H1Pre = case init:get_argument(ssh_default_user) of {ok, [[A]]} -> A ++ "@"; _ -> "" end,
 			spawn_link(fun () ->
-				do_setup(Node, Kernel, U1, "ubuntu@" ++ H1, H1, Type, MyNode, LongOrShortNames,SetupTime)
+				do_setup(Node, Kernel, U1, H1Pre ++ H1, H1, Type, MyNode, LongOrShortNames,SetupTime)
 			end)
 	end.
 
