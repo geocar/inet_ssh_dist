@@ -1,6 +1,7 @@
 -module(inet_ssh_proxy).
 -behaviour(gen_server).
 
+-include_lib("kernel/include/inet.hrl").
 -include_lib("kernel/include/net_address.hrl").
 
 -export([setup/3, setup/4]).
@@ -34,9 +35,11 @@ callback(PeerName, Fingerprint) ->
 
 init([Address]) ->
 	undefined == application:get_application(ssh) andalso ssh:start(),
-	{HostPart, Opts} = case string:split(Address, "@") of [U,H] -> {H, [{user, U}] }; [H] -> {H, []} end,
+	BaseOpts = [{user_interaction,false},{silently_accept_hosts,fun callback/2}],
+	{HostPart, Opts} = case string:split(Address, "@") of [U,H] -> {H, [{user, U}|BaseOpts] }; [H] -> {H, BaseOpts} end,
 	{Host, Port} = case string:split(HostPart, ":") of [A,P] -> {A, list_to_integer(P)}; [A] -> {A, 22} end,
-	{ok, SSH} = ssh:connect(Host, Port, Opts ++ [{user_interaction,false},{silently_accept_hosts,fun callback/2}]),
+	{ok,#hostent{ h_addr_list = HL }} = inet:gethostbyname(Host),
+	{ok, SSH} = lists:foldr(fun(_IP, S = {ok, _SSH}) -> S; (IP, _) -> ssh:connect(IP, Port, Opts) end, {error, enoent}, HL),
 	[{socket,Sock}] = ssh:connection_info(SSH,[socket]),
 	{ok, #state{ ssh = SSH, sock = Sock }}.
 
