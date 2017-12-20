@@ -51,6 +51,9 @@ You can [add keys manually](https://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_
 
 ### Adding an SSH key that can only be used for Erlang
 
+If you don't have root, or you share your application user with your release team (ha ha ha enterprise), then
+you will want to add the ssh key directly to the user account.
+
 First, make sure you know what port Erlang is going to use, by adding the following to the command line:
 
     -ssh_default_user erlang
