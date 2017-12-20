@@ -11,7 +11,7 @@ and then everything goes over ssh. Even [epmd](http://www1.erlang.org/doc/man/ep
 * No you don't need a special SSH server.
 * No you don't need the [Erlang SSH server](http://erlang.org/doc/apps/ssh/using_ssh.html) (and in fact, this isn't even supported yet)
 
-An ssh `known_hosts` must already be populated since the distribution cannot accept new hosts on an ad-hoc basis.
+An ssh `known_hosts` must already be populated since the distribution will refuse to accept new hosts on an ad-hoc basis.
 
 ## Using as a road-warrior
 
