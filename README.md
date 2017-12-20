@@ -43,11 +43,11 @@ Edit `/etc/ssh/sshd/config`:
       PermitOpen localhost:10069
       ForceCommand echo 'This is a restricted account'
 
-Reload sshd.  Then create the user:
+[Reload sshd](http://www.letmegooglethat.com/?q=how+do+i+reload+sshd%3F).  Then create the user:
 
     sudo useradd -m erlang
 
-You can add keys manually (but not using `ssh-copy-id`).
+You can [add keys manually](https://man.openbsd.org/sshd.8#AUTHORIZED_KEYS_FILE_FORMAT) (but not using `ssh-copy-id`).
 
 ### Adding an SSH key that can only be used for Erlang
 
