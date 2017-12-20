@@ -43,7 +43,7 @@ init([Address]) ->
 	[{socket,Sock}] = ssh:connection_info(SSH,[socket]),
 	{ok, #state{ ssh = SSH, sock = Sock }}.
 
-handle_call(getll, _From, State) ->  {reply, {ok, State#state.sock}, State};
+handle_call(getll, _From, State) -> {reply, {ok, State#state.sock}, State};
 handle_call(_Message, _From, State) -> {reply, nyi, State}.
 handle_cast(_Message, State) -> {noreply, State}.
 

@@ -29,26 +29,26 @@ mf_getstat(Socket) -> inet_tcp_dist:getstat(Socket).
 do_setup(Node, Kernel, RequestedName, SSH, Hostname, Type, MyNode, _LongOrShortNames,SetupTime) ->
 	Timer = dist_util:start_timer(SetupTime),
 	{port, UsePort, Version} = inet_ssh_epms:port_please(RequestedName, SSH),
-  dist_util:reset_timer(Timer),
+	dist_util:reset_timer(Timer),
 	{ok, Socket, {IP, _}} = inet_ssh_proxy:setup(SSH, UsePort, [list,{active,false},{packet, 2}]),
-  dist_util:handshake_we_started(#hs_data{
-    kernel_pid = Kernel,
-    other_node = Node,
-    this_node = MyNode,
-    socket = Socket,
-    timer = Timer,
-    this_flags = 0,
-    other_version = Version,
-    f_send = fun gen_tcp:send/2,
-    f_recv = fun gen_tcp:recv/3,
-    f_setopts_pre_nodeup = fun pre_nodeup/1,
-    f_setopts_post_nodeup = fun post_nodeup/1,
-    f_getll = fun inet:getll/1,
-    f_address = fun(_,_) -> #net_address{ host = Hostname, address = {IP,UsePort}, family = inet, protocol = proxy } end,
+	dist_util:handshake_we_started(#hs_data{
+		kernel_pid = Kernel,
+		other_node = Node,
+		this_node = MyNode,
+		socket = Socket,
+		timer = Timer,
+		this_flags = 0,
+		other_version = Version,
+		f_send = fun gen_tcp:send/2,
+		f_recv = fun gen_tcp:recv/3,
+		f_setopts_pre_nodeup = fun pre_nodeup/1,
+		f_setopts_post_nodeup = fun post_nodeup/1,
+		f_getll = fun inet:getll/1,
+		f_address = fun(_,_) -> #net_address{ host = Hostname, address = {IP,UsePort}, family = inet, protocol = proxy } end,
 		mf_tick = fun mf_tick/1,
 		mf_getstat = fun mf_getstat/1,
-    request_type = Type
-  }).
+		request_type = Type
+	}).
 
 
 childspecs() -> inet_tcp_dist:childspecs().
