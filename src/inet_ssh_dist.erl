@@ -16,6 +16,7 @@ setup(Node, Type, MyNode, LongOrShortNames,SetupTime) ->
 			Kernel = self(), 
 			H1Pre = case init:get_argument(ssh_default_user) of {ok, [[A]]} -> A ++ "@"; _ -> "" end,
 			spawn_link(fun () ->
+				process_flag(priority, max),
 				do_setup(Node, Kernel, U1, H1Pre ++ H1, H1, Type, MyNode, LongOrShortNames,SetupTime)
 			end)
 	end.

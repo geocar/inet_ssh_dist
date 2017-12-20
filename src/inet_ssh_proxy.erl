@@ -41,6 +41,7 @@ init([Address]) ->
 	{ok,#hostent{ h_addr_list = HL }} = inet:gethostbyname(Host),
 	{ok, SSH} = lists:foldr(fun(_IP, S = {ok, _SSH}) -> S; (IP, _) -> ssh:connect(IP, Port, Opts) end, {error, enoent}, HL),
 	[{socket,Sock}] = ssh:connection_info(SSH,[socket]),
+	process_flag(priority, max),
 	{ok, #state{ ssh = SSH, sock = Sock }}.
 
 handle_call(getll, _From, State) -> {reply, {ok, State#state.sock}, State};
