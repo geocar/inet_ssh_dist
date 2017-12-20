@@ -2,16 +2,14 @@
 
 `inet_ssh_dist` is an Erlang distribution (network protocol) that runs *over* ssh.
 
+Configuration could be as simple as,
+
     -proto_dist inet_ssh
 
-and now everything goes over ssh. Even [epmd](http://www1.erlang.org/doc/man/epmd.html).
+and then everything goes over ssh. Even [epmd](http://www1.erlang.org/doc/man/epmd.html).
 
 * No you don't need a special SSH server.
 * No you don't need the [Erlang SSH server](http://erlang.org/doc/apps/ssh/using_ssh.html) (and in fact, this isn't even supported yet)
-
-You can set the default ssh user using an argument;
-
-    -ssh_default_user erlang
 
 An ssh `known_hosts` must already be popuated since the distribution cannot accept new hosts on an ad-hoc basis.
 
@@ -30,8 +28,9 @@ Note this isn't very fast, but if you can't get IPSEC working this is a lot easi
 
 First, make sure you know what port Erlang is going to use, by adding the following to the command line:
 
-    -kernel inet_dist_listen_min 10069
-    -kernel inet_dist_listen_max 10069
+    -ssh_default_user erlang
+    -inet_dist_listen_min 10069
+    -inet_dist_listen_max 10069
 
 Edit `/etc/ssh/sshd/config`:
 
@@ -54,8 +53,9 @@ You can add keys manually (but not using `ssh-copy-id`).
 
 First, make sure you know what port Erlang is going to use, by adding the following to the command line:
 
-    -kernel inet_dist_listen_min 10069
-    -kernel inet_dist_listen_max 10069
+    -ssh_default_user erlang
+    -inet_dist_listen_min 10069
+    -inet_dist_listen_max 10069
 
 Then add to the beginning of every restricted key in your `~/.ssh/authorized_keys` file:
 
