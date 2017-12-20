@@ -1,3 +1,5 @@
+# inet\_ssh_dist
+
 `inet_ssh_dist` is an Erlang distribution (network protocol) that runs *over* ssh.
 
     -proto_dist inet_ssh
@@ -13,18 +15,18 @@ You can set the default ssh user using an argument;
 
 An ssh `known_hosts` must already be popuated since the distribution cannot accept new hosts on an ad-hoc basis.
 
-# Using as a road-warrior
+## Using as a road-warrior
 
 If your Erlang cluster is already using `inet_dist_tcp` and you can ssh to your nodes, then you don't have to do anything
 except use `-proto_dist inet_ssh` on your road-warrior machine, and tell Erlang what your node username is, e.g.
 
     -proto_dist inet_ssh -ssh_default_user erlang
 
-# Using for cluster-communication
+## Using for cluster-communication
 
 Note this isn't very fast, but if you can't get IPSEC working this is a lot easier than getting TLS working right.
 
-## Creating a user for restricted port forwarding
+### Creating a user for restricted port forwarding
 
 First, make sure you know what port Erlang is going to use, by adding the following to the command line:
 
@@ -48,7 +50,7 @@ Reload sshd.  Then create the user:
 
 You can add keys manually (but not using `ssh-copy-id`).
 
-## Adding an SSH key that can only be used for Erlang
+### Adding an SSH key that can only be used for Erlang
 
 First, make sure you know what port Erlang is going to use, by adding the following to the command line:
 
@@ -63,7 +65,7 @@ Here's a complete example, but obviously use your own key:
 
     command="echo 'This is a restricted account'",no-agent-forwarding,no-X11-forwarding,permitopen="localhost:10069" ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAqrlwlnH3xpHntabqfgGBrMOPc83ShDCzTNskx+wQ30sScsONjikuyKQ0FV34RDGhSsd3VpNE8hUpYTVPPCI0wDgOZrUSKWGSbN9s6q1OOcaKRnuOxBguFdgimDemFuQ3VFj1hzZ0ZHt9tq442AQjpDdxHb8KBiiu/qziTvPVP0hzO7xty3ebBxxuRn7vSnKqswM8PQOqJXksok38PoxTDL2l9Nuz5vhl6gS8KA7szlGpve+EnYNgr9ob0QEm5TqKFbYwpaSuOCEQivc/m3urNUIis80sHP/PWFVK4sPc48cpvn6Tzosx+GK5j2KMynJVOES4Hc8LyRWysssBFQyZhw== rsa-key-20000000
 
-## Verifying you've got a restricted SSH setup
+### Verifying you've got a restricted SSH setup
 
 First, make sure what doesn't work:
 
