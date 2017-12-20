@@ -2,7 +2,7 @@
 
     -proto_dist inet_ssh
 
-and now everything goes over ssh. Even EPMD.
+and now everything goes over ssh. Even [epmd](http://www1.erlang.org/doc/man/epmd.html).
 
 * No you don't need a special SSH server.
 * No you don't need the [Erlang SSH server](http://erlang.org/doc/apps/ssh/using_ssh.html) (and in fact, this isn't even supported yet)
