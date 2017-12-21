@@ -52,15 +52,14 @@ do_setup(Node, Kernel, RequestedName, SSH, Hostname, Type, MyNode, _LongOrShortN
 	}).
 
 
-childspecs() -> inet_tcp_dist:childspecs().
-select(Node) when is_atom(Node) -> length(string:split(atom_to_list(Node), "@")) == 2; select(_) -> false.
+childspecs() -> {ok, []}.
+select(Node) -> inet_tcp_dist:select(Node).
 listen(Name) -> inet_tcp_dist:listen(Name).
 
 accept(Listen) -> inet_tcp_dist:gen_accept(inet_tcp, Listen).
 close(Socket) -> gen_tcp:close(Socket).
 
-is_node_name(Node) when is_atom(Node) -> select(Node);
-is_node_name(_Node) -> false.
+is_node_name(Node) -> inet_tcp_dist:is_node_name(Node).
 
 accept_connection(AcceptPid, Socket, MyNode, Allowed, SetupTime) ->
 	inet_tcp_dist:gen_accept_connection(inet_tcp, AcceptPid, Socket, MyNode, Allowed, SetupTime).
