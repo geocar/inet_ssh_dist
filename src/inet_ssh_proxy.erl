@@ -11,6 +11,8 @@
 -define(PACKET_SIZE, 32768).
 -define(WINDOW_SIZE, 4*?PACKET_SIZE).
 
+opts(K) -> case application:get_env(kernel, K) of {ok, ConnectOpts} -> ConnectOpts; _ -> [] end.
+
 setup(Address, Port, Opts) -> setup(Address, Port, Opts, infinity).
 setup(Address, Port, Opts, Timeout) ->
 	T = binary_to_atom(iolist_to_binary(io_lib:format("~p", [{?MODULE, Address}])),utf8),
@@ -39,7 +41,8 @@ init([Address]) ->
 	{HostPart, Opts} = case string:split(Address, "@") of [U,H] -> {H, [{user, U}|BaseOpts] }; [H] -> {H, BaseOpts} end,
 	{Host, Port} = case string:split(HostPart, ":") of [A,P] -> {A, list_to_integer(P)}; [A] -> {A, 22} end,
 	{ok,#hostent{ h_addr_list = HL }} = inet:gethostbyname(Host),
-	{ok, SSH} = lists:foldr(fun(_IP, S = {ok, _SSH}) -> S; (IP, _) -> ssh:connect(IP, Port, Opts) end, {error, enoent}, HL),
+	UseOpts = opts(inet_dist_connect_options) ++ opts(inet_ssh_dist_connect_options) ++ Opts,
+	{ok, SSH} = lists:foldr(fun(_IP, S = {ok, _SSH}) -> S; (IP, _) -> ssh:connect(IP, Port, UseOpts) end, {error, enoent}, HL),
 	[{socket,Sock}] = ssh:connection_info(SSH,[socket]),
 	process_flag(priority, max),
 	{ok, #state{ ssh = SSH, sock = Sock }}.
