@@ -25,7 +25,7 @@ setup(Address, Port, Opts, Timeout) ->
 	Pid ! {setup, LP, Port, Opts},
 	{ok, Sock} = gen_tcp:accept(LS, Timeout),
 	ok = gen_tcp:close(LS),
-	ok = inet:setopts(Sock, Opts),
+	ok = inet:setopts(Sock, [{nodelay,true}|Opts]),
 	{ok, SSHSocket} = gen_server:call(Pid, getll),
 	{ok, InetAddress} = inet:peername(SSHSocket),
 	{ok, Sock, InetAddress}.
@@ -55,7 +55,7 @@ handle_info({setup, LocalPort, RemotePort, _Opts}, State = #state{ ssh = SSH })
 	H = <<"localhost">>, L=byte_size(H), P = 10000 + rand:uniform(55000),
 	M = <<L:32/big, H/binary, RemotePort:32/big, L:32/big, H/binary, P:32/big>>,
 	{open, Ref} = ssh_connection_handler:open_channel(SSH, "direct-tcpip", M, ?WINDOW_SIZE, ?PACKET_SIZE, infinity),
-	{ok, Conn} = gen_tcp:connect({127,0,0,1},LocalPort,[binary,{active,true}]),
+	{ok, Conn} = gen_tcp:connect({127,0,0,1},LocalPort,[binary,{nodelay,true},{active,true}]),
 	{noreply, State#state{ cr = maps:put(Conn, Ref, State#state.cr), rc = maps:put(Ref, Conn, State#state.rc) } };
 handle_info({tcp, Conn, Data}, State) ->
 	%io:fwrite(standard_error, "tcp from erlang to ssh ~p~n",[Data]),
