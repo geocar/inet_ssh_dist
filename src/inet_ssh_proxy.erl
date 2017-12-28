@@ -8,8 +8,8 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2, terminate/2, code_change/3]). %gen_server
 -record(state, { ssh, sock, cr = #{}, rc = #{} }).
 
--define(PACKET_SIZE, 32768).
--define(WINDOW_SIZE, 4*?PACKET_SIZE).
+-define(PACKET_SIZE, 2147483648). % rfc4254 says this is the biggest block we can receive,
+-define(WINDOW_SIZE, 2147483648). % and erlang doesn't support bigger than 2G 
 
 opts(K) -> case application:get_env(kernel, K) of {ok, ConnectOpts} -> ConnectOpts; _ -> [] end.
 
