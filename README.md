@@ -63,11 +63,11 @@ First, make sure you know what port Erlang is going to use, by adding the follow
 
 Then add to the beginning of every restricted key in your `~/.ssh/authorized_keys` file:
 
-    command="echo 'This is a restricted account'",no-agent-forwarding,no-X11-forwarding,permitopen="localhost:10069"
+    command="echo 'This is a restricted account'",no-agent-forwarding,no-X11-forwarding,permitopen=":10069"
 
 Here's a complete example, but obviously use your own key:
 
-    command="echo 'This is a restricted account'",no-agent-forwarding,no-X11-forwarding,permitopen="localhost:10069" ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAqrlwlnH3xpHntabqfgGBrMOPc83ShDCzTNskx+wQ30sScsONjikuyKQ0FV34RDGhSsd3VpNE8hUpYTVPPCI0wDgOZrUSKWGSbN9s6q1OOcaKRnuOxBguFdgimDemFuQ3VFj1hzZ0ZHt9tq442AQjpDdxHb8KBiiu/qziTvPVP0hzO7xty3ebBxxuRn7vSnKqswM8PQOqJXksok38PoxTDL2l9Nuz5vhl6gS8KA7szlGpve+EnYNgr9ob0QEm5TqKFbYwpaSuOCEQivc/m3urNUIis80sHP/PWFVK4sPc48cpvn6Tzosx+GK5j2KMynJVOES4Hc8LyRWysssBFQyZhw== rsa-key-20000000
+    command="echo 'This is a restricted account'",no-agent-forwarding,no-X11-forwarding,permitopen=":10069" ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAqrlwlnH3xpHntabqfgGBrMOPc83ShDCzTNskx+wQ30sScsONjikuyKQ0FV34RDGhSsd3VpNE8hUpYTVPPCI0wDgOZrUSKWGSbN9s6q1OOcaKRnuOxBguFdgimDemFuQ3VFj1hzZ0ZHt9tq442AQjpDdxHb8KBiiu/qziTvPVP0hzO7xty3ebBxxuRn7vSnKqswM8PQOqJXksok38PoxTDL2l9Nuz5vhl6gS8KA7szlGpve+EnYNgr9ob0QEm5TqKFbYwpaSuOCEQivc/m3urNUIis80sHP/PWFVK4sPc48cpvn6Tzosx+GK5j2KMynJVOES4Hc8LyRWysssBFQyZhw== rsa-key-20000000
 
 ### Verifying you've got a restricted SSH setup
 
