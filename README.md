@@ -38,6 +38,7 @@ Edit `/etc/ssh/sshd/config`:
       AllowTcpForwarding local
       X11Forwarding no
       PermitTunnel no
+      PermitTTY no
       GatewayPorts no
       AllowAgentForwarding no
       AllowStreamLocalForwarding no
