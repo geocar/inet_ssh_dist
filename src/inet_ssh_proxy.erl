@@ -122,6 +122,7 @@ handle_info({tcp_error, Conn, _Reason}, State = #state{ cr = CR, ssh = SSH }) ->
 handle_info({ssh_cm, SSH, {data, Ref, _, Data}}, State = #state{ dist = Dist, ssh = SSH, rc = RC }) ->
 	%io:fwrite(standard_error, "~p ssh data: ~p~n",[SSH,Data]),
 	Conn = gb_trees:get(Ref, RC),
+	ssh_connection:adjust_window(SSH, Ref, byte_size(Data)),
 	%io:fwrite(standard_error, "~p ssh ~p data to erlang: ~p is conn ~p~n",[SSH,byte_size(Data),Ref,Conn]),
 	Dist2 = case gb_trees:lookup(Ref, Dist) of
 		{value, {Size, OldData}} ->
