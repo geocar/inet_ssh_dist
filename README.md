@@ -35,11 +35,12 @@ First, make sure you know what port Erlang is going to use, by adding the follow
 Edit `/etc/ssh/sshd/config`:
 
     Match User erlang
-      AllowTcpForwarding yes
+      AllowTcpForwarding local
       X11Forwarding no
       PermitTunnel no
       GatewayPorts no
       AllowAgentForwarding no
+      AllowStreamLocalForwarding no
       PermitOpen localhost:10069
       ForceCommand echo 'This is a restricted account'
 
