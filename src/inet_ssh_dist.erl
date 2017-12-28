@@ -21,30 +21,45 @@ setup(Node, Type, MyNode, LongOrShortNames,SetupTime) ->
 			end)
 	end.
 
-pre_nodeup(Socket) -> inet:setopts(Socket, [{active,false}, {packet,4}]), ok.
-post_nodeup(Socket) -> inet:setopts(Socket, [{deliver,port},{active,true}, {packet,4}]), ok.
+pre_nodeup({Socket,Pid}) ->
+	ok = gen_server:call(Pid, {packet_mode, Socket, 4}),
+	gen_server:call(Pid, {pre_nodeup, Socket}),
+	inet:setopts(Socket, [{active,false}]),
+	ok.
 
-mf_tick(Socket) -> gen_tcp:send(Socket, []).
-mf_getstat(Socket) -> inet_tcp_dist:getstat(Socket).
+post_nodeup({Socket,Pid}) ->
+	ok = gen_server:call(Pid, {packet_mode, Socket, 4}),
+	gen_server:call(Pid, {post_nodeup, Socket}),
+	inet:setopts(Socket, [{deliver,port},{active,true}]),
+	ok.
 
-do_setup(Node, Kernel, RequestedName, SSH, Hostname, Type, MyNode, _LongOrShortNames,SetupTime) ->
+mf_tick({Socket,_Pid}) -> inet_tcp_dist:tick(inet_tcp, Socket).
+mf_getstat({Socket,_Pid}) -> inet_tcp_dist:getstat(Socket).
+
+my_recv({Socket,_Pid}, Count, Timeout) -> gen_tcp:recv(Socket, Count, Timeout).
+my_send({Socket,_Pid}, Data) -> gen_tcp:send(Socket, Data).
+my_getll({Socket, _Pid}) -> inet:getll(Socket).
+
+do_setup(Node, Kernel, RequestedName, SSH_Host, Hostname, Type, MyNode, _LongOrShortNames,SetupTime) ->
 	Timer = dist_util:start_timer(SetupTime),
-	{port, UsePort, Version} = inet_ssh_epms:port_please(RequestedName, SSH),
+	{port, UsePort, Version} = inet_ssh_epms:remote_port(RequestedName, SSH_Host),
 	dist_util:reset_timer(Timer),
-	{ok, Socket, {IP, _}} = inet_ssh_proxy:setup(SSH, UsePort, [list,{active,false},{packet, 2}]),
+	{ok, Socket, {IP, _Port}, Pid} = inet_ssh_proxy:setup("direct-tcpip", SSH_Host, UsePort, [list,{active,false}], infinity),
+	ok = gen_server:call(Pid, {packet_mode, Socket, 2}),
+	%ErlEpmd = net_kernel:epmd_module(), ErlEpmd:register_node(Node, Port, inet_tcp),
 	dist_util:handshake_we_started(#hs_data{
 		kernel_pid = Kernel,
 		other_node = Node,
 		this_node = MyNode,
-		socket = Socket,
+		socket = {Socket, Pid},
 		timer = Timer,
 		this_flags = 0,
 		other_version = Version,
-		f_send = fun gen_tcp:send/2,
-		f_recv = fun gen_tcp:recv/3,
+		f_send = fun my_send/2,
+		f_recv = fun my_recv/3,
 		f_setopts_pre_nodeup = fun pre_nodeup/1,
 		f_setopts_post_nodeup = fun post_nodeup/1,
-		f_getll = fun inet:getll/1,
+		f_getll = fun my_getll/1,
 		f_address = fun(_,_) -> #net_address{ host = Hostname, address = {IP,UsePort}, family = inet, protocol = proxy } end,
 		mf_tick = fun mf_tick/1,
 		mf_getstat = fun mf_getstat/1,
@@ -54,9 +69,9 @@ do_setup(Node, Kernel, RequestedName, SSH, Hostname, Type, MyNode, _LongOrShortN
 
 childspecs() -> {ok, []}.
 select(Node) -> inet_tcp_dist:select(Node).
-listen(Name) -> inet_tcp_dist:listen(Name).
+listen(Name) -> erlang:display({being_asked_to_listen,Name}), inet_tcp_dist:listen(Name).
 
-accept(Listen) -> inet_tcp_dist:gen_accept(inet_tcp, Listen).
+accept(Listen) -> erlang:display({being_asked_to_accept,Listen}), inet_tcp_dist:gen_accept(inet_tcp, Listen).
 close(Socket) -> gen_tcp:close(Socket).
 
 is_node_name(Node) -> inet_tcp_dist:is_node_name(Node).
